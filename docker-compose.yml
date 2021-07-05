@@ -1,0 +1,33 @@
+version: '3.4'
+
+services: 
+    database-service:
+        image: mongo:latest
+        restart: always
+        volumes: 
+            - ./db:/data/db
+        environment: 
+            # MONGO_INITDB_ROOT_USERNAME: root_username
+            # MONGO_INITDB_ROOT_PASSWORD: root_password
+            MONGO_INITDB_DATABASE: todo_app
+        ports: 
+            - 27017:27017
+        networks: 
+            - shared-network
+
+    api-service:
+        image: api-service
+        restart: always
+        build: 
+            context: ./todo-app
+            dockerfile: ./Dockerfile
+        ports: 
+            - 8080:8080
+        depends_on: 
+            - database-service
+        networks: 
+            - shared-network
+
+networks: 
+    shared-network:
+        driver: bridge
